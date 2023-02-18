@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - main
 concurrency:
   group: ${{ github.head_ref || github.ref_name }} 
   cancel-in-progress: true
