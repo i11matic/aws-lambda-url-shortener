@@ -39,7 +39,7 @@ def get_original_url(short_url, dynamodb, table_name):
     return item["Item"]["orginalUrl"]
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     if table_name not in dynamodb_client.list_tables()["TableNames"]:
         create_table(dynamodb)
 
