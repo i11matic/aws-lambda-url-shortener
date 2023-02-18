@@ -2,7 +2,8 @@
 name: Release
 on:
   push:
-    branches: [main]
+    branches:
+      - master
 concurrency:
   group: ${{ github.head_ref || github.ref_name }} 
   cancel-in-progress: true
