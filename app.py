@@ -60,10 +60,4 @@ def handler(event, context):
             dynamodb,
             table_name,
         )
-        return {
-            "statusCode": 200,
-            "body": {
-                "originalURL": url,
-            },
-        }
-
+        return {"statusCode": 302, "headers": {"Location": url}}
