@@ -33,5 +33,6 @@ jobs:
         with:
           push: true
           platforms: linux/arm64
+          provenance: false
           tags: ${{ steps.login-ecr.outputs.registry }}/lamba-containers/lambda-urlshortener-py:latest
           context: .
