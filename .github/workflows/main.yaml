@@ -23,7 +23,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          registries: 766251705079.dkr.ecr.us-west-2.amazonaws.com/lamba-containers
+          registries: 766251705079
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -32,5 +32,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/lambda-urlshortener-py:latest
+          tags: ${{ steps.login-ecr.outputs.registry }}/lamba-containers/lambda-urlshortener-py:latest
           context: .
