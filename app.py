@@ -42,7 +42,7 @@ def lambda_handler(event, context):
     if table_name not in dynamodb_client.list_tables()["TableNames"]:
         create_table(dynamodb, table_name)
 
-    if event["httpMethod"] == "POST":
+    if event["requestContext"]["http"]["method"] == "POST":
         short_url = create_short_url(
             event["body"]["url"], dynamodb, table_name
         )
@@ -53,9 +53,9 @@ def lambda_handler(event, context):
             },
         }
 
-    if event["httpMethod"] == "GET":
+    if event["requestContext"]["http"]["httpMethod"] == "GET":
         url = get_original_url(
-            event["requestContext"]["path"].strip("/"),
+            event["rawPath"].strip("/"),
             dynamodb,
             table_name,
         )
