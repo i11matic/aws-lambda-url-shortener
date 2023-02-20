@@ -45,14 +45,18 @@ def lambda_handler(event, context):
     if event["requestContext"]["http"]["method"] == "POST":
         body = json.loads(event["body"])
         short_url = create_short_url(body["url"], dynamodb, table_name)
-        return json.dumps(
-            {
-                "statusCode": 200,
-                "body": {
-                    "shortlink": short_url,
-                },
-            }
-        )
+        response = dict()
+        response["statusCode"] = 200
+        response["body"] = json.dumps({"shortlink": short_url})
+        return response
+        # return json.dumps(
+        #     {
+        #         "statusCode": 200,
+        #         "body": {
+        #             "shortlink": short_url,
+        #         },
+        #     }
+        # )
     if event["requestContext"]["http"]["method"] == "GET":
         url = get_original_url(
             event["pathParameters"]["proxy"],
