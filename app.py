@@ -2,9 +2,13 @@ import boto3
 import os
 from secrets import token_urlsafe
 
-dynamodb_endpoint_url = os.getenv(
-    "DYNAMODB_ENDPOINT_URL", "http://localhost:8000"
-)
+running_mode = os.getenv("RUNNING_MODE", "production")
+
+if running_mode == "local":
+    dynamodb_endpoint_url = "http://localhost:8000"
+else:
+    dynamodb_endpoint_url = None
+
 dynamodb = boto3.resource("dynamodb", endpoint_url=dynamodb_endpoint_url)
 dynamodb_client = boto3.client("dynamodb", endpoint_url=dynamodb_endpoint_url)
 table_name = os.getenv("DYNAMODB", "url-shortener")
@@ -20,8 +24,8 @@ def create_table(dynamodb, table_name):
             {"AttributeName": "shortUrl", "AttributeType": "S"},
         ],
         ProvisionedThroughput={
-            "ReadCapacityUnits": os.getenv("DYNAMODB_READ_CAPACITY", 1),
-            "WriteCapacityUnits": os.getenv("DYNAMODB_WRITE_CAPACITY", 1),
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1,
         },
     )
 
