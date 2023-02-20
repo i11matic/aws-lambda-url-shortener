@@ -59,4 +59,10 @@ def lambda_handler(event, context):
             dynamodb,
             table_name,
         )
-        return json.dumps({"statusCode": 302, "headers": {"Location": url}})
+        return json.dumps(
+            {
+                "statusCode": 301,
+                "headers": {"Location": url},
+                "Access-Control-Allow-Origin": "*",
+            }
+        )
