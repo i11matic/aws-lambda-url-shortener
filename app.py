@@ -1,5 +1,6 @@
 import boto3
 import os
+import json
 from secrets import token_urlsafe
 
 dynamodb_endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL")
@@ -43,9 +44,8 @@ def lambda_handler(event, context):
         create_table(dynamodb, table_name)
 
     if event["requestContext"]["http"]["method"] == "POST":
-        short_url = create_short_url(
-            event["body"]["url"], dynamodb, table_name
-        )
+        body = json.loads(event["body"]["url"])
+        short_url = create_short_url(body["url"], dynamodb, table_name)
         return {
             "statusCode": 200,
             "body": {
