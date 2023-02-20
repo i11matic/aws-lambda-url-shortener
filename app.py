@@ -38,6 +38,7 @@ def get_original_url(short_url, dynamodb, table_name):
 
 
 def lambda_handler(event, context):
+    print(event)
     if table_name not in dynamodb_client.list_tables()["TableNames"]:
         create_table(dynamodb, table_name)
 
