@@ -2,13 +2,7 @@ import boto3
 import os
 from secrets import token_urlsafe
 
-running_mode = os.getenv("RUNNING_MODE", "production")
-
-if running_mode == "local":
-    dynamodb_endpoint_url = "http://localhost:8000"
-else:
-    dynamodb_endpoint_url = None
-
+dynamodb_endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL")
 dynamodb = boto3.resource("dynamodb", endpoint_url=dynamodb_endpoint_url)
 dynamodb_client = boto3.client("dynamodb", endpoint_url=dynamodb_endpoint_url)
 table_name = os.getenv("DYNAMODB", "url-shortener")
@@ -45,7 +39,7 @@ def get_original_url(short_url, dynamodb, table_name):
 
 def lambda_handler(event, context):
     if table_name not in dynamodb_client.list_tables()["TableNames"]:
-        create_table(dynamodb,table_name)
+        create_table(dynamodb, table_name)
 
     if event["httpMethod"] == "POST":
         short_url = create_short_url(
