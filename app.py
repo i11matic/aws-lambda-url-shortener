@@ -44,7 +44,8 @@ def lambda_handler(event, context):
         create_table(dynamodb, table_name)
 
     if event["requestContext"]["http"]["method"] == "POST":
-        body = json.loads(event["body"]["url"])
+        body = json.loads(event["body"])
+        print(body)
         short_url = create_short_url(body["url"], dynamodb, table_name)
         return {
             "statusCode": 200,
