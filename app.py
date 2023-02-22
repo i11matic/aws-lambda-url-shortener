@@ -5,10 +5,7 @@ import json
 from secrets import token_urlsafe
 
 dynamodb_endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL")
-dax_endpoint = os.getenv(
-    "DAX_ENDPOINT",
-    "dax://dax-cluster.be48kz.dax-clusters.us-west-2.amazonaws.com",
-)
+dax_endpoint = os.getenv("DAX_ENDPOINT")
 dynamodb = boto3.resource("dynamodb", endpoint_url=dynamodb_endpoint_url)
 dynamodb_client = boto3.client("dynamodb", endpoint_url=dynamodb_endpoint_url)
 table_name = os.getenv("DYNAMODB", "url-shortener")
@@ -55,7 +52,7 @@ def lambda_handler(event, context):
             ) as dax:
                 short_url = create_short_url(body["url"], dax, table_name)
         else:
-            short_url = create_short_url(body["url"], dax, table_name)
+            short_url = create_short_url(body["url"], dynamodb, table_name)
         response = dict()
         response["statusCode"] = 200
         response["body"] = json.dumps({"shortlink": short_url})
