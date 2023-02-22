@@ -1,9 +1,14 @@
+import amazondax
 import boto3
 import os
 import json
 from secrets import token_urlsafe
 
 dynamodb_endpoint_url = os.getenv("DYNAMODB_ENDPOINT_URL")
+dax_endpoint = os.getenv(
+    "DAX_ENDPOINT",
+    "dax://dax-cluster.be48kz.dax-clusters.us-west-2.amazonaws.com",
+)
 dynamodb = boto3.resource("dynamodb", endpoint_url=dynamodb_endpoint_url)
 dynamodb_client = boto3.client("dynamodb", endpoint_url=dynamodb_endpoint_url)
 table_name = os.getenv("DYNAMODB", "url-shortener")
@@ -44,18 +49,34 @@ def lambda_handler(event, context):
 
     if event["requestContext"]["http"]["method"] == "POST":
         body = json.loads(event["body"])
-        short_url = create_short_url(body["url"], dynamodb, table_name)
+        if dax_endpoint:
+            with amazondax.AmazonDaxClient.resource(
+                endpoint_url=dax_endpoint
+            ) as dax:
+                short_url = create_short_url(body["url"], dax, table_name)
+        else:
+            short_url = create_short_url(body["url"], dax, table_name)
         response = dict()
         response["statusCode"] = 200
         response["body"] = json.dumps({"shortlink": short_url})
         return response
 
     if event["requestContext"]["http"]["method"] == "GET":
-        url = get_original_url(
-            event["pathParameters"]["proxy"],
-            dynamodb,
-            table_name,
-        )
+        if dax_endpoint:
+            with amazondax.AmazonDaxClient.resource(
+                endpoint_url=dax_endpoint
+            ) as dax:
+                url = get_original_url(
+                    event["pathParameters"]["proxy"],
+                    dax,
+                    table_name,
+                )
+        else:
+            url = get_original_url(
+                event["pathParameters"]["proxy"],
+                dynamodb,
+                table_name,
+            )
         response = dict()
         response["statusCode"] = 302
         response["body"] = json.dumps(dict())
